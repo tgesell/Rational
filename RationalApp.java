@@ -43,6 +43,7 @@ public class RationalApp extends JFrame {
      */
     public RationalApp() {
         operatorSelected = "none";
+        super.setResizable(false);
         initComponents();
     }
 
