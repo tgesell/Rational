@@ -229,7 +229,6 @@ public class RationalApp extends JFrame {
         }
         try{
             denominator1Value = Integer.parseInt(denominator1.getText());
-            if (denominator1Value <= 0) throw new NumberFormatException("Denominator must be positive");
         }catch(NumberFormatException e){
             denominator1Value = 1;
             denominator1.setText("1");
@@ -252,7 +251,6 @@ public class RationalApp extends JFrame {
         }
         try{
             denominator2Value = Integer.parseInt(denominator2.getText());
-            if (denominator2Value <= 0) throw new NumberFormatException("Denominator must be positive");
         }catch(NumberFormatException e){
             denominator2Value = 1;
             denominator2.setText("1");
