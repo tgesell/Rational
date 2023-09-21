@@ -2,6 +2,10 @@ import javax.swing.*;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.Container;
+import java.awt.geom.Rectangle2D;
+import java.awt.font.*;
+import java.awt.Font;
+import java.awt.Graphics2D;
 
 /**
  *
@@ -33,7 +37,7 @@ public class RationalApp extends JFrame {
     private JSeparator jSeparator2;
     private JSeparator jSeparator3;
 
-    private JLabel errorMessages;
+    private JPanel mainPanel;
 
     private String operatorSelected;
     /**
@@ -41,7 +45,7 @@ public class RationalApp extends JFrame {
      */
     public RationalApp() {
         operatorSelected = "none";
-        //super.setResizable(false);
+        super.setResizable(false);
         super.setSize(400,400);
         initComponents();
     }
@@ -73,17 +77,18 @@ public class RationalApp extends JFrame {
         jSeparator2 = new JSeparator();
         jSeparator3 = new JSeparator();
 
-        errorMessages = new JLabel();
+        mainPanel = new JPanel();
+        mainPanel.setLayout(null);
 
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
-        wholeNumber1.setColumns(2);
-        numerator1.setColumns(2);
-        denominator1.setColumns(2);
+        // wholeNumber1.setColumns(2);
+        // numerator1.setColumns(2);
+        // denominator1.setColumns(2);
 
-        wholeNumber2.setColumns(2);
-        numerator2.setColumns(2);
-        denominator2.setColumns(2);
+        // wholeNumber2.setColumns(2);
+        // numerator2.setColumns(2);
+        // denominator2.setColumns(2);
 
         addButton.setText("+");
         operatorButtons.add(addButton);
@@ -128,8 +133,6 @@ public class RationalApp extends JFrame {
             }
         });
 
-        JPanel mainPanel = new JPanel();
-        mainPanel.setLayout(null);
 
         wholeNumber1.setBounds(10,50,40,25);
         numerator1.setBounds(55,35,40,25);
@@ -149,13 +152,11 @@ public class RationalApp extends JFrame {
         divideButton.setBounds(130,150,35,25);
 
         resultWhole.setBounds(210,150,40,25);
-        resultNumerator.setBounds(255,135,40,25);
+        resultNumerator.setBounds(255,135,80,25);
         jSeparator3.setBounds(255,162,40,10);
-        resultDenominator.setBounds(255,165,40,25);
+        resultDenominator.setBounds(255,165,80,25);
 
         calculateButton.setBounds(50,200,80,25);
-
-        errorMessages.setBounds(10,250,super.getWidth()-20,super.getHeight()-250);
 
         mainPanel.add(wholeNumber1);
         mainPanel.add(numerator1);
@@ -180,7 +181,6 @@ public class RationalApp extends JFrame {
         mainPanel.add(resultDenominator);
 
         mainPanel.add(calculateButton);
-        mainPanel.add(errorMessages);
 
         getContentPane().add(mainPanel);
     }
@@ -212,51 +212,63 @@ public class RationalApp extends JFrame {
         int sign2 = 1;
 
         try{
-            wholeNumber1Value = Integer.parseInt(wholeNumber1.getText());
-        }catch(NumberFormatException e){
-            if (wholeNumber1.getText().equals("-"))
-                sign1 = -1;
-            else{
-                wholeNumber1.setText("");
+            try{
+                wholeNumber1Value = Integer.parseInt(wholeNumber1.getText());
+                if (Math.abs(wholeNumber1Value) > 999)
+                    throw new IllegalArgumentException("Please limit values to 4 digits or less");
+            }catch(NumberFormatException e){
+                if (wholeNumber1.getText().equals("-"))
+                    sign1 = -1;
+                else{
+                    wholeNumber1.setText("");
+                }
+                wholeNumber1Value = 0;
             }
-            wholeNumber1Value = 0;
-        }
-        try{
-            numerator1Value   = Integer.parseInt(numerator1.getText());
-        }catch(NumberFormatException e){
-            numerator1Value = 0;
-            numerator1.setText("0");
-        }
-        try{
-            denominator1Value = Integer.parseInt(denominator1.getText());
-        }catch(NumberFormatException e){
-            denominator1Value = 1;
-            denominator1.setText("1");
-        }
-        try{
-            wholeNumber2Value = Integer.parseInt(wholeNumber2.getText());
-        }catch(NumberFormatException e){
-            if (wholeNumber2.getText().equals("-"))
-                sign2 = -1;
-            else{
-                wholeNumber2.setText("");
+            try{
+                numerator1Value   = Integer.parseInt(numerator1.getText());
+                if (Math.abs(numerator1Value) > 999)
+                    throw new IllegalArgumentException("Please limit values to 4 digits or less");
+            }catch(NumberFormatException e){
+                numerator1Value = 0;
+                numerator1.setText("0");
             }
-            wholeNumber2Value = 0;
-        }
-        try{
-            numerator2Value   = Integer.parseInt(numerator2.getText());
-        }catch(NumberFormatException e){
-            numerator2Value = 0;
-            numerator2.setText("0");
-        }
-        try{
-            denominator2Value = Integer.parseInt(denominator2.getText());
-        }catch(NumberFormatException e){
-            denominator2Value = 1;
-            denominator2.setText("1");
-        }
+            try{
+                denominator1Value = Integer.parseInt(denominator1.getText());
+                if (Math.abs(denominator1Value) > 999)
+                    throw new IllegalArgumentException("Please limit values to 4 digits or less");
+            }catch(NumberFormatException e){
+                denominator1Value = 1;
+                denominator1.setText("1");
+            }
+            try{
+                wholeNumber2Value = Integer.parseInt(wholeNumber2.getText());
+                if (Math.abs(wholeNumber2Value) > 999)
+                    throw new IllegalArgumentException("Please limit values to 4 digits or less");
+            }catch(NumberFormatException e){
+                if (wholeNumber2.getText().equals("-"))
+                    sign2 = -1;
+                else{
+                    wholeNumber2.setText("");
+                }
+                wholeNumber2Value = 0;
+            }
+            try{
+                numerator2Value   = Integer.parseInt(numerator2.getText());
+                if (Math.abs(numerator2Value) > 999)
+                    throw new IllegalArgumentException("Please limit values to 4 digits or less");
+            }catch(NumberFormatException e){
+                numerator2Value = 0;
+                numerator2.setText("0");
+            }
+            try{
+                denominator2Value = Integer.parseInt(denominator2.getText());
+                if (Math.abs(denominator2Value) > 999)
+                    throw new IllegalArgumentException("Please limit values to 4 digits or less");
+            }catch(NumberFormatException e){
+                denominator2Value = 1;
+                denominator2.setText("1");
+            }
 
-        try{
             Rational rational1;
             if (wholeNumber1Value != 0)
                 rational1 = new Rational(wholeNumber1Value,numerator1Value,denominator1Value);
@@ -294,6 +306,42 @@ public class RationalApp extends JFrame {
                 resultWhole.setText("");
                 resultNumerator.setText(result.getNumerator()+ " ");
                 resultDenominator.setText(result.getDenominator()+ " ");
+            }
+            //resize the result Label
+            Graphics2D g2 = (Graphics2D) mainPanel.getGraphics();
+            Font font = g2.getFont();
+            FontRenderContext context = g2.getFontRenderContext();
+
+            Rectangle2D resultWholeBounds = font.getStringBounds(resultWhole.getText(), context);
+            Rectangle2D resultNumeratorBounds = font.getStringBounds(resultNumerator.getText(), context);
+            Rectangle2D resultDenominatorBounds = font.getStringBounds(resultDenominator.getText(), context);
+
+            int resultWholeWidth = (int)resultWholeBounds.getWidth() + 1;
+            int resultNumeratorWidth = (int)resultNumeratorBounds.getWidth() + 1;
+            int resultDenominatorWidth = (int)resultDenominatorBounds.getWidth() + 1;
+            //resize resultLabels so that the result Rational number fits/displays nicely
+            {
+                mainPanel.remove(resultWhole);
+                mainPanel.remove(resultNumerator);
+                mainPanel.remove(jSeparator3);
+                mainPanel.remove(resultDenominator);
+
+                int digits = resultWhole.getText().length();
+                resultWhole.setBounds(210,150,
+                        resultWholeWidth, 25);
+
+                int startPos = 210 + resultWholeWidth + 5;
+                resultNumerator.setBounds(startPos,135,resultNumeratorWidth,25);
+                jSeparator3.setBounds(startPos,162,resultNumeratorWidth>resultDenominatorWidth?resultNumeratorWidth:resultDenominatorWidth,10);
+                resultDenominator.setBounds(startPos,165,resultDenominatorWidth,25);
+
+                mainPanel.add(resultWhole);
+                mainPanel.add(resultNumerator);
+                mainPanel.add(jSeparator3);
+                mainPanel.add(resultDenominator);
+
+                this.repaint();
+
             }
 
         }catch(Exception e){
